@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Paramore 🎸</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #ff5e62, #ff9966);
+      color: #fff;
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh; margin: 0; padding: 20px;
+    }
+    .quiz-container {
+      background: rgba(0,0,0,0.55);
+      border-radius: 20px;
+      padding: 24px;
+      width: 100%; max-width: 560px;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(0,0,0,0.3);
+      animation: fadeIn .7s ease;
+    }
+    @keyframes fadeIn {
+      from {opacity:0; transform: translateY(10px);}
+      to {opacity:1; transform: translateY(0);}
+    }
+    h1 { font-size: 26px; margin: 10px 0 12px; }
+    .band-img {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.2);
+    }
+    .btn {
+      display: block; width: 100%;
+      background: #fff; color: #ff5e62;
+      border: none; padding: 12px;
+      margin: 8px 0; border-radius: 10px;
+      font-size: 16px; cursor: pointer;
+      transition: .2s;
+    }
+    .btn:hover {
+      background: #ff9966;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .hide { display: none; }
+    #feedback { margin-top: 12px; font-weight: 700; min-height: 24px; }
+    #score { margin-top: 16px; font-size: 18px; }
+    .prize-img {
+      width: 180px; margin-top: 12px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+        <h1>Quiz Paramore 🎤</h1>
+
+    <div id="start-screen">
+      <p>Teste seus conhecimentos sobre Paramore e prove que é fã de verdade!</p>
+      <button id="start-btn" class="btn">Começar</button>
+    </div>
+
+    <div id="quiz-screen" class="hide">
+      <h2 id="question">Pergunta aqui</h2>
+      <div id="answers"></div>
+      <div id="feedback"></div>
+    </div>
+
+    <div id="end-screen" class="hide">
+      <h2>🎉 Fim do Quiz!</h2>
+      <p id="score"></p>
+      <button id="restart-btn" class="btn">Jogar novamente</button>
+    </div>
+
+    <div id="prize-screen" class="hide">
+      <h2>💿 Parabéns, superfã! 💿</h2>
+      <p>Você acertou mais de 8 perguntas e acaba de ganhar o CD do álbum <strong>Brand New Eyes</strong>!</p>
+      <img src="https://upload.wikimedia.org/wikipedia/pt/7/7d/Brand_New_Eyes_cover.jpg"
+           class="prize-img" alt="Brand New Eyes CD">
+      <button id="restart-btn2" class="btn">Jogar novamente</button>
+    </div>
+  </div>
+
+  <script>
+    // --- 25 perguntas ---
+    const allQuestions = [
+      {q:"Antes de se chamar Paramore, qual era o nome provisório da banda?", a:["The Factory","Still Pending","Neon","Zero Gravity"], c:"Still Pending"},
+      {q:"‘The Only Exception’ pertence a qual álbum?", a:["Riot!","Brand New Eyes","After Laughter","Paramore (2013)"], c:"Brand New Eyes"},
+      {q:"Em qual cidade do Tennessee o Paramore foi formado?", a:["Nashville","Franklin","Memphis","Knoxville"], c:"Franklin"},
+      {q:"Em que ano foi lançado o álbum ‘Riot!’?", a:["2005","2007","2009","2010"], c:"2007"},
+      {q:"Qual single iniciou a era ‘After Laughter’?", a:["Hard Times","Fake Happy","Rose-Colored Boy","Told You So"], c:"Hard Times"},
+      {q:"Qual integrante retornou à banda na fase do ‘After Laughter’?", a:["Jeremy Davis","Josh Farro","Zac Farro","Taylor York"], c:"Zac Farro"},
+      {q:"Qual faixa do álbum ‘Paramore (2013)’ NÃO foi single principal?", a:["Now","Still Into You","Anklebiters","Ain’t It Fun"], c:"Anklebiters"},
+      {q:"Qual música do Paramore entrou na trilha de ‘Transformers: Dark of the Moon’ (2011)?", a:["Monster","Decode","Crushcrushcrush","Careful"], c:"Monster"},
+      {q:"Complete a letra: “When I was younger I saw my daddy cry and curse at the wind” é de qual música?", a:["The Only Exception","26","Hate To See Your Heart Break","Last Hope"], c:"The Only Exception"},
+      {q:"Em que ano o Paramore ganhou o Grammy de ‘Best Rock Song’ com ‘Ain’t It Fun’?", a:["2013","2014","2015","2016"], c:"2015"},
+      {q:"Qual dessas músicas foi composta apenas por Hayley e Taylor?", a:["26","Crushcrushcrush","Ignorance","Fake Happy"], c:"26"},
+      {q:"Qual álbum traz a música ‘Running Out of Time’?", a:["Brand New Eyes","This Is Why","After Laughter","Riot!"], c:"This Is Why"},
+      {q:"Qual dessas faixas é conhecida por falar sobre ansiedade e autoproteção?", a:["Forgiveness","Fake Happy","Grow Up","Daydreaming"], c:"Fake Happy"},
+      {q:"Qual EP acústico o Paramore lançou em 2009?", a:["The Final RIOT!","Live in the UK","The Summer Tic EP","Brand New Eyes Acoustic"], c:"The Summer Tic EP"},
+      {q:"‘Decode’ foi composta para qual filme?", a:["Crepúsculo","Harry Potter","Transformers","Jogos Vorazes"], c:"Crepúsculo"},
+      {q:"Qual dessas faixas contém a frase 'For all I know, the best is over and the worst is yet to come'?", a:["26","Pool","Last Hope","Rose-Colored Boy"], c:"Pool"},
+      {q:"Qual desses ex-integrantes era irmão de Zac Farro?", a:["Josh Farro","Jeremy Davis","Jason Bynum","Taylor York"], c:"Josh Farro"},
+      {q:"Em ‘Ain’t It Fun’, o coro gospel aparece em qual parte?", a:["Refrão","Ponte final","Introdução","Verso inicial"], c:"Ponte final"},
+      {q:"Em qual álbum Hayley Williams cortou o cabelo ruivo característico?", a:["Paramore (2013)","After Laughter","Brand New Eyes","This Is Why"], c:"After Laughter"},
+      {q:"Qual música abre o álbum ‘This Is Why’?", a:["Running Out of Time","This Is Why","C’est Comme Ça","You First"], c:"This Is Why"},
+      {q:"Qual turnê ficou conhecida pelo uso de balões coloridos e confetes no final dos shows?", a:["Riot! Tour","After Laughter Tour","Brand New Eyes Tour","This Is Why Tour"], c:"After Laughter Tour"},
+      {q:"‘Misery Business’ foi retirada dos setlists por causa de que motivo?", a:["Letra considerada problemática","Direitos autorais","Voz de Hayley mudou","Não fez sucesso"], c:"Letra considerada problemática"},
+      {q:"Qual dessas músicas começa com a frase 'Can’t count the years on one hand that we’ve been together'?", a:["Still Into You","That’s What You Get","Daydreaming","Hard Times"], c:"Still Into You"},
+      {q:"O clipe de qual música mostra Hayley com cabelo amarelo e fundo psicodélico colorido?", a:["Told You So","Hard Times","Rose-Colored Boy","Fake Happy"], c:"Hard Times"},
+      {q:"Qual álbum marcou o retorno da banda após o hiato de 2016?", a:["After Laughter","This Is Why","Paramore (2013)","Brand New Eyes"], c:"After Laughter"},
+    ];
+
+    const startBtn = document.getElementById('start-btn');
+    const quizScreen = document.getElementById('quiz-screen');
+    const startScreen = document.getElementById('start-screen');
+    const endScreen = document.getElementById('end-screen');
+    const prizeScreen = document.getElementById('prize-screen');
+    const questionEl = document.getElementById('question');
+    const answersEl = document.getElementById('answers');
+    const feedbackEl = document.getElementById('feedback');
+    const scoreEl = document.getElementById('score');
+    const restartBtn = document.getElementById('restart-btn');
+    const restartBtn2 = document.getElementById('restart-btn2');
+
+    let currentQuestion = 0;
+    let score = 0;
+    let quizQuestions = [];
+
+    startBtn.addEventListener('click', startQuiz);
+    restartBtn.addEventListener('click', restartQuiz);
+    restartBtn2.addEventListener('click', restartQuiz);
+
+    function startQuiz() {
+      startScreen.classList.add('hide');
+      quizScreen.classList.remove('hide');
+      currentQuestion = 0;
+      score = 0;
+      // embaralha e seleciona 10 aleatórias
+      quizQuestions = shuffle(allQuestions).slice(0, 10);
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = quizQuestions[currentQuestion];
+      questionEl.textContent = q.q;
+      answersEl.innerHTML = '';
+      feedbackEl.textContent = '';
+      shuffle(q.a).forEach(opt => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.classList.add('btn');
+        btn.addEventListener('click', () => selectAnswer(opt === q.c));
+        answersEl.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(isCorrect) {
+      if (isCorrect) {
+        score++;
+        feedbackEl.textContent = "✅ Correto!";
+        feedbackEl.style.color = "#00ff9d";
+      } else {
+        feedbackEl.textContent = "❌ Errado!";
+        feedbackEl.style.color = "#ff7070";
+      }
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < quizQuestions.length) showQuestion();
+        else endQuiz();
+      }, 900);
+    }
+
+    function endQuiz() {
+      quizScreen.classList.add('hide');
+      if (score > 8) prizeScreen.classList.remove('hide');
+      else {
+        endScreen.classList.remove('hide');
+        scoreEl.textContent = `Você acertou ${score} de ${quizQuestions.length} perguntas!`;
+      }
+    }
+
+    function restartQuiz() {
+      endScreen.classList.add('hide');
+      prizeScreen.classList.add('hide');
+      startScreen.classList.remove('hide');
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+  </script>
+</body>
+</html>
